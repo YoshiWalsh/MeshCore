@@ -181,6 +181,10 @@ class UbloxLocationProvider : public LocationProvider {
   long _epoch = 0;
   bool _fix = false;
 public:
+  UbloxLocationProvider(mesh::RTCClock* clock = NULL) :
+  _clock(clock) {
+    
+  }
   long getLatitude() override { return _lat; }
   long getLongitude() override { return _lng; }
   long getAltitude() override { return _alt; }
@@ -232,11 +236,13 @@ public:
       _fix = false;
     }
     _epoch = ublox_GNSS.getUnixEpoch(2);
+
+    LocationManager::loop();
   }
   bool isEnabled() override { return true; }
 };
 
-static UbloxLocationProvider Ublox_provider;
+static UbloxLocationProvider Ublox_provider = UbloxLocationProvider(&rtc_clock);
 #endif
 
 // ============================================================
